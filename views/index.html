@@ -2,8 +2,36 @@
 <html>
     <head>
         <link rel="stylesheet" href="style.css" />
+        <title>Todo App</title>
     </head>
     <body>
-        <p class="message">Hello World</p>
+        <ul id="garage-area">
+        </ul>
+        <form action="cars/new" method="POST">
+            <input type="text" name="brand" placeholder="write brand" />
+            <input type="text" name="model" placeholder="write model" />
+            <input type="submit" />
+        </form>
+
+        <script>
+            fetch("/cars").then(function(res){
+                res.json().then(function(data){
+                    data.forEach(function(car){
+                        let carhtml = document.createElement("li");
+                        let deletebutton= document.createElement('button');
+                        let updatebutton= document.createElement('button');
+                        deletebutton.innerHTML = "delete this car";
+                        updatebutton.innerHTML = "update this car"
+                        
+                        carhtml.innerText = car.name + " " + car.model;
+                        console.log("Car:",carhtml.innerText)
+                        document.getElementById('garage-area').append(carhtml);
+                        document.getElementById('garage-area').append(deletebutton);
+                        document.getElementById('garage-area').append(updatebutton);
+
+                    })
+                })
+            })
+        </script>
     </body>    
 </html>
