@@ -3,33 +3,14 @@ const app = express();
 const message = require('./message.js');
 const mustache = require('mustache-express');
 const mongo = require('mongodb').MongoClient;
-const mongoClient = require('mongodb').MongoClient;
+const mongoClient = require('mongodb').MongoClient; //Start mongdb server: mongod --dbpath /usr/local/var/mongodb --logpath /usr/local/var/log/mongodb/mongo.log --fork
 const url = 'mongodb://127.0.0.1:27017';
+let ObjectId = require('mongodb').ObjectID;
 const cryptoUtils = require('./cryptoUtils.js');
 const bodyParser = require('body-parser');
 
 //Simple module example
 cryptoUtils.test_aes_cbc('Seco');
-
-//Start mongdb server: mongod --dbpath /usr/local/var/mongodb --logpath /usr/local/var/log/mongodb/mongo.log --fork
-// mongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true}, function(error, client){
-//     var db = client.db('mydb');
-//     let cars = db.collection('cars');
-    
-//     //cars.insertOne({name:"Honda", model:"CRV"});
-//     //cars.deleteOne({model:"CRV"});
-
-//     cars.find({}).toArray(function(err, docs) {
-
-//      // Print the documents returned
-//      docs.forEach(function(doc) {
-//          console.log(doc);
-//      });
-
-//      // Close the DB
-//      client.close();
-//      });
-// });
 
 //Another simple module example
 console.log(message["letters"]);
@@ -78,7 +59,7 @@ app.post("/cars/new", function(req,res){
             let cars = db.collection('cars');
 
             cars.insertOne({
-                name: req.body.brand, 
+                name: req.body.name, 
                 model: req.body.model
             });
     
@@ -88,6 +69,35 @@ app.post("/cars/new", function(req,res){
     });
     res.redirect('/');
 });
+
+app.put("/cars/update/:id",function(req,res){
+    mongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true}, function(error, client){
+        if(!error){
+            var db = client.db('mydb');
+            let cars = db.collection('cars');
+
+            cars.update({
+                _id: new ObjectId(req.params.id)
+            }, {$set: {
+                name: req.body.name,
+                model: req.body.model
+            }})    
+        }
+    })
+})
+
+app.delete("/cars/delete/:id",function(req,res){
+    mongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true}, function(error, client){
+        if(!error){
+            var db = client.db('mydb');
+            let cars = db.collection('cars');
+
+            cars.deleteOne({
+                _id: new ObjectId(req.params.id)
+            })    
+        }
+    })
+})
 
 app.listen(3000,function(error){
     if(error == true){
