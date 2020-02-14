@@ -8,7 +8,7 @@ let ObjectId = require('mongodb').ObjectID;
 const cryptoUtils = require('./cryptoUtils.js');
 const bodyParser = require('body-parser');
 
-const url = 'mongodb://127.0.0.1:27017';
+const url = 'mongodb://heroku_2cx9hhj1:qma4v4i0o9b8bs21cgm2i14bpd@ds045795.mlab.com:45795/heroku_2cx9hhj1' || 'mongodb://127.0.0.1:27017';
 const port = process.env.PORT || 3000;
 
 //Simple module example
