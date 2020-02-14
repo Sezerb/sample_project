@@ -4,10 +4,12 @@ const message = require('./message.js');
 const mustache = require('mustache-express');
 const mongo = require('mongodb').MongoClient;
 const mongoClient = require('mongodb').MongoClient; //Start mongdb server: mongod --dbpath /usr/local/var/mongodb --logpath /usr/local/var/log/mongodb/mongo.log --fork
-const url = 'mongodb://127.0.0.1:27017';
 let ObjectId = require('mongodb').ObjectID;
 const cryptoUtils = require('./cryptoUtils.js');
 const bodyParser = require('body-parser');
+
+const url = 'mongodb://127.0.0.1:27017';
+const port = process.env.PORT || 3000;
 
 //Simple module example
 cryptoUtils.test_aes_cbc('Seco');
@@ -63,11 +65,12 @@ app.post("/cars/new", function(req,res){
                 model: req.body.model
             });
     
-             // Close connection to DB
-             //client.close();
+            res.redirect('/');
+        }
+        else{
+            res.status(400).json({ success: 0});
         }
     });
-    res.redirect('/');
 });
 
 app.put("/cars/update/:id",function(req,res){
@@ -81,8 +84,14 @@ app.put("/cars/update/:id",function(req,res){
             }, {$set: {
                 name: req.body.name,
                 model: req.body.model
-            }})    
+            }});
+            
+            res.status(200).json({ success: 1});
         }
+        else{
+            res.status(400).json({ success: 0});    
+        }
+        
     })
 })
 
@@ -94,12 +103,17 @@ app.delete("/cars/delete/:id",function(req,res){
 
             cars.deleteOne({
                 _id: new ObjectId(req.params.id)
-            })    
+            })
+            
+            res.status(200).json({ success: 1});
+        }
+        else{
+            res.status(400).json({ success: 0});
         }
     })
 })
 
-app.listen(3000,function(error){
+app.listen(port,function(error){
     if(error == true){
         console.log("some error occured");
     }else{
