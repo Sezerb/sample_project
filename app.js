@@ -34,23 +34,28 @@ app.get("/", function(req,res){
 //Restful Routes
 app.get("/cars", function(req,res){
     mongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true}, function(error, client){
-        var db = client.db('mydb');
-        let cars = db.collection('cars');
+        if(!error){
+            var db = client.db('mydb');
+            let cars = db.collection('cars');
+            
+            //cars.insertOne({name:"Honda", model:"CRV"});
+            //cars.deleteOne({model:"CRV"});
         
-        //cars.insertOne({name:"Honda", model:"CRV"});
-        //cars.deleteOne({model:"CRV"});
-    
-        cars.find({}).toArray(function(err, results) {
-         res.send(JSON.stringify(results));
+            cars.find({}).toArray(function(err, results) {
+            res.send(JSON.stringify(results));
 
-        // Print the results returned
-         results.forEach(function(result) {
-             console.log(result);
-         });
-    
-         // Close connection to DB
-         //client.close();
-         });
+            // Print the results returned
+            results.forEach(function(result) {
+                console.log(result);
+            });
+        
+            // Close connection to DB
+            //client.close();
+            });
+        }
+        else{
+            res.status(400).json({ success: 0});
+        }
     });
 })
 
